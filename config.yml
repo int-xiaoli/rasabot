@@ -1,36 +1,21 @@
 recipe: default.v1
 language: zh
-
 pipeline:
 - name: JiebaTokenizer
 - name: LanguageModelFeaturizer
-  model_name: "bert"
-  model_weights: "bert-base-chinese"    # 改用已缓存的BERT模型
+  model_name: bert
+  model_weights: bert-base-chinese
+- name: RegexFeaturizer
 - name: DIETClassifier
   epochs: 100
-  constrain_similarities: true
-
-- name: EntitySynonymMapper
-
+  learning_rate: 0.001
+  tensorboard_log_directory: ./log
 - name: ResponseSelector
   epochs: 100
-  constrain_similarities: true
-
-- name: FallbackClassifier
-  threshold: 0.3
-  ambiguity_threshold: 0.1
-
+  learning_rate: 0.001
+- name: EntitySynonymMapper
 policies:
 - name: MemoizationPolicy
+- name: TEDPolicy
 - name: RulePolicy
-- name: TEDPolicy
-  epochs: 100
-  constrain_similarities: true
-- name: UnexpecTEDIntentPolicy
-  max_history: 5
-  epochs: 100
-- name: TEDPolicy
-  max_history: 5
-  epochs: 100
-  constrain_similarities: true
-assistant_id: 20250412-203320-excited-grade
+assistant_id: 20250423-211700-violent-beef
