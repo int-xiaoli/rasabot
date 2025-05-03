@@ -1,18 +1,58 @@
 version: "3.1"
 rules:
+  # 天气表单激活规则
   - rule: activate weather form
     steps:
       - intent: weather
       - action: weather_form
       - active_loop: weather_form
+
+  # 表单提交规则
   - rule: Submit form
     condition:
-      # Condition that form is active.
       - active_loop: weather_form
     steps:
       - action: weather_form
       - active_loop: null
       - slot_was_set:
           - requested_slot: null
-      # The action we want to run when the form is submitted.
       - action: action_weather_form_submit
+
+  # 修改后的DeepSeek调用规则
+  # 移除有问题的规则，合并到现有规则中
+  - rule: Call Deepseek for general intents
+    condition:
+      - active_loop: null
+    steps:
+      - or: 
+          - intent: greet
+          - intent: goodbye 
+          - intent: chitchat/whoyouare
+          - intent: chitchat/whatyoucando
+          - intent: info_date  # 合并原General Response规则
+          - intent: info_address
+          - intent: affirm
+          - intent: deny
+          - intent: stop
+      - action: action_call_deepseek
+  
+  # 移除以下冗余规则：
+  # - rule: DeepSeek General Response
+  #   condition:
+  #     - not: active_loop
+  #   steps:
+  #     - intent: [info_date, info_address...]
+  #     - action: action_call_deepseek
+
+  # Fallback规则
+  - rule: Fallback to DeepSeek
+    steps:
+      - intent: nlu_fallback
+      - action: action_call_deepseek
+
+  # - rule: DeepSeek General Response
+  #   condition:
+  #     - not: active_loop
+  #   steps:
+  #     - intent: [info_date, info_address, affirm, deny, stop]
+  #     - action: action_call_deepseek

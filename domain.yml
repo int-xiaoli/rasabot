@@ -3,6 +3,7 @@ session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
 intents:
+  - nlu_fallback  # 新增Fallback意图
   - goodbye
   - greet
   - weather
@@ -40,7 +41,7 @@ responses:
   utter_ask_continue:
     - text: 是否要继续？
   utter_default:
-    - text: 系统不明白您说的话，请换个说法。
+    - text: 正在为您处理请求...
 actions:
   - utter_ask_address
   - utter_ask_date-time
@@ -50,6 +51,8 @@ actions:
   - utter_default
   - respond_chitchat
   - action_weather_form_submit
+  - action_call_deepseek  # 新增
+
 forms:
   weather_form:
     ignored_intents: []

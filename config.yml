@@ -15,7 +15,11 @@ pipeline:
   learning_rate: 0.001
 - name: EntitySynonymMapper
 policies:
+- name: RulePolicy
+  core_fallback_threshold: 0.4
+  core_fallback_action_name: "action_call_deepseek"
+  enable_fallback_prediction: True
 - name: MemoizationPolicy
 - name: TEDPolicy
-- name: RulePolicy
+  max_history: 5
 assistant_id: 20250423-211700-violent-beef
