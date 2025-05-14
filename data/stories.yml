@@ -38,3 +38,8 @@ stories:
     steps:
       - intent: nlu_fallback
       - action: action_call_deepseek
+
+  - story: 新闻查询流程
+    steps:
+    - intent: query_news
+    - action: action_query_news

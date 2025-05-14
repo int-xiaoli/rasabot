@@ -1,0 +1,12 @@
+{
+  "0": "affirm",
+  "1": "chitchat",
+  "2": "deny",
+  "3": "goodbye",
+  "4": "greet",
+  "5": "info_address",
+  "6": "info_date",
+  "7": "nlu_fallback",
+  "8": "stop",
+  "9": "weather"
+}

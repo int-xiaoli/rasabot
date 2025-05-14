@@ -7,9 +7,15 @@ from service.normalization import text_to_date
 from service.weather import get_text_weather_date
 from rasa_sdk.events import SlotSet
 import requests
+import logging
+import json
 
 DEEPSEEK_API_KEY = "sk-e79979444e7b4f588881ed11f4d653ca"  # 需要用户替换真实API密钥
 DEEPSEEK_ENDPOINT = "https://api.deepseek.com"
+
+# 配置日志记录
+logger = logging.getLogger(__name__)
+
 
 class CallDeepseekAction(Action):
     def name(self) -> Text:
@@ -29,7 +35,7 @@ class CallDeepseekAction(Action):
                     "model": "deepseek-chat",
                     "temperature": 0.7
                 },
-                timeout=15  # 延长超时时间
+                timeout=60  # 延长超时时间
             )
             response.raise_for_status()
             result = response.json()
@@ -80,3 +86,40 @@ class WeatherFormAction(Action):
 
         return []  
     
+
+class ActionQueryNews(Action):
+    def name(self) -> Text:
+        return "action_query_news"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[Text, Any]) -> List[Dict]:
+        API_ENDPOINT = "https://whyta.cn/api/toutiao"
+        API_KEY = "36de5db81215"
+        
+        # 从用户输入提取数字
+        import re
+        user_text = tracker.latest_message.get('text', '')
+        match = re.search(r'(\d+)', user_text)
+        n = int(match.group(1)) if match else 5  # 默认5条
+        
+        try:
+            response = requests.get(
+                API_ENDPOINT,
+                params={"key": API_KEY},
+                timeout=10
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get("status") == "success" and isinstance(data.get("items"), list):
+                # 提取指定数量的新闻
+                news_list = data["items"][:n]
+                result = "为您获取头条新闻：\n"
+                for i, item in enumerate(news_list, 1):
+                    result += f"{i}. {item['title']}\n   {item['url']}\n"
+                
+                dispatcher.utter_message(text=result or "未找到匹配新闻")
+                
+        except Exception as e:
+            dispatcher.utter_message(text=f"获取新闻失败: {str(e)}")
+            
+        return []

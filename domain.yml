@@ -13,6 +13,7 @@ intents:
   - affirm
   - info_date
   - info_address
+  - query_news
 entities:
   - address
   - date-time
@@ -51,8 +52,9 @@ actions:
   - utter_default
   - respond_chitchat
   - action_weather_form_submit
-  - action_call_deepseek  # 新增
-
+  - action_call_deepseek  # 调用deepseek
+  - action_query_news  #新闻查询
+ 
 forms:
   weather_form:
     ignored_intents: []
